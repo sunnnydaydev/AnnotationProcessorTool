@@ -7,10 +7,8 @@ import java.lang.annotation.Target;
 
 /**
  * Created by sunnyDay on 2020/6/9
- * 检测getter方法的注解
- * 可作用类、字段。
  */
-@Target({ElementType.TYPE, ElementType.FIELD})
+@Target({ElementType.TYPE, ElementType.FIELD,ElementType.METHOD})
 @Retention(RetentionPolicy.SOURCE)
 public @interface CheckGetter {
 }

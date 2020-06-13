@@ -94,53 +94,53 @@ public class CheckGetterProcessor extends AbstractProcessor {
 //        }
 
         //获得所有注解作用的方法元素，解析方法上的注解信息。
-//        for (Element element : roundEnvironment.getElementsAnnotatedWith(CheckGetter.class)) {
-//            ExecutableElement executableElement = (ExecutableElement) element;// 由于作用于方法所以可以直接强转方法类型
-//            TypeElement classElement = (TypeElement) executableElement.getEnclosingElement(); // 类型之间还可以转换，方法的外层即类
-//            PackageElement packageElement = elementUtil.getPackageOf(classElement);// 根据元素直接获得包类型
-//
-//            String pkgName = packageElement.getQualifiedName().toString();// 包名
-//            String fullClassName = classElement.getQualifiedName().toString(); //全类名
-//            String methodName = executableElement.getSimpleName().toString();//方法名
-//            note("--------------process method info-----------");
-//            note("pkgName:" + pkgName);
-//            note("fullClassName:" + fullClassName);
-//            note("methodName:" + methodName);
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(CheckGetter.class)) {
+            ExecutableElement executableElement = (ExecutableElement) element;// 由于作用于方法所以可以直接强转方法类型
+            TypeElement classElement = (TypeElement) executableElement.getEnclosingElement(); // 类型之间还可以转换，方法的外层即类
+            PackageElement packageElement = elementUtil.getPackageOf(classElement);// 根据元素直接获得包类型
+
+            String pkgName = packageElement.getQualifiedName().toString();// 包名
+            String fullClassName = classElement.getQualifiedName().toString(); //全类名
+            String methodName = executableElement.getSimpleName().toString();//方法名
+            note("--------------process method info-----------");
+            note("pkgName:" + pkgName);
+            note("fullClassName:" + fullClassName);
+            note("methodName:" + methodName);
 
             //方法参数列表元素:一般用于获取参数类型、参数名。
-//            List<? extends VariableElement> methodParameters = executableElement.getParameters();
-//            List<String> types = new ArrayList<>();
-//            for (VariableElement variableElement : methodParameters) {// 遍历每个参数元素
-//                TypeMirror methodParameterType = variableElement.asType();
-//
-//                String parameterName = variableElement.getSimpleName().toString(); //参数名
-//                String parameterKind = methodParameterType.toString(); //参数类型
-//                note("------------process method param-------------");
-//                note("parameterName:" + parameterName);
-//                note("parameterKind:" + parameterKind);
-//                note("typeVariable:" + methodParameterType);
-//
-//
-//            }
-//            note("types:" + types.toString());
-//        }
+            List<? extends VariableElement> methodParameters = executableElement.getParameters();
+            List<String> types = new ArrayList<>();
+            for (VariableElement variableElement : methodParameters) {// 遍历每个参数元素
+                TypeMirror methodParameterType = variableElement.asType();
+
+                String parameterName = variableElement.getSimpleName().toString(); //参数名
+                String parameterKind = methodParameterType.toString(); //参数类型
+                note("------------process method param-------------");
+                note("parameterName:" + parameterName);
+                note("parameterKind:" + parameterKind);
+                note("typeVariable:" + methodParameterType);
+
+
+            }
+            note("types:" + types.toString());
+        }
 
 
         //解析属性上的注解，获得每个属性上的元素信息。
-        for (Element element : roundEnvironment.getElementsAnnotatedWith(CheckGetter.class)) {
-            VariableElement variableElement = (VariableElement) element;
-            TypeMirror typeMirror = variableElement.asType();
+//        for (Element element : roundEnvironment.getElementsAnnotatedWith(CheckGetter.class)) {
+//            VariableElement variableElement = (VariableElement) element;
+//            TypeMirror typeMirror = variableElement.asType();
+//
+//            CheckGetter checkGetter = element.getAnnotation(CheckGetter.class);
+//           // checkGetter.value() 注解定义值时这里可以取出
+//
+//            note("--------------------------------process field info ----------------------------");
+//            note("typeMirror:" + typeMirror.toString()); // 变量类型全名（带包名）
+//            note("variableElement.getSimpleName:" + variableElement.getSimpleName()); // 变量名
+//            note("variableElement.getEnclosingElement:" + variableElement.getEnclosingElement());
 
-            CheckGetter checkGetter = element.getAnnotation(CheckGetter.class);
-           // checkGetter.value() 注解定义值时这里可以取出
-
-            note("--------------------------------process field info ----------------------------");
-            note("typeMirror:" + typeMirror.toString()); // 变量类型全名（带包名）
-            note("variableElement.getSimpleName:" + variableElement.getSimpleName()); // 变量名
-            note("variableElement.getEnclosingElement:" + variableElement.getEnclosingElement());
-
-
-        }
+//
+//        }
 
         return true;
     }

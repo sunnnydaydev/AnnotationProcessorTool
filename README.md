@@ -247,12 +247,173 @@ class Foo {      // TypeElement
             note("typeMirror:" + typeMirror.toString()); // 变量类型全名（带包名）
             note("variableElement.getSimpleName:" + variableElement.getSimpleName()); // 变量名
             note("variableElement.getEnclosingElement:" + variableElement.getEnclosingElement());
+        }
+```
 
+###### 5、API练习#ExecutableElement
 
+```java
+   //获得所有注解作用的方法元素，解析方法上的注解信息。
+        for (Element element : roundEnvironment.getElementsAnnotatedWith(CheckGetter.class)) {
+            ExecutableElement executableElement = (ExecutableElement) element;// 由于作用于方法所以可以直接强转方法类型
+            TypeElement classElement = (TypeElement) executableElement.getEnclosingElement(); // 类型之间还可以转换，方法的外层即类
+            PackageElement packageElement = elementUtil.getPackageOf(classElement);// 根据元素直接获得包类型
+
+            String pkgName = packageElement.getQualifiedName().toString();// 包名
+            String fullClassName = classElement.getQualifiedName().toString(); //全类名
+            String methodName = executableElement.getSimpleName().toString();//方法名
+            note("--------------process method info-----------");
+            note("pkgName:" + pkgName);
+            note("fullClassName:" + fullClassName);
+            note("methodName:" + methodName);
+
+           // 方法参数列表元素:一般用于获取参数类型、参数名。
+            List<? extends VariableElement> methodParameters = executableElement.getParameters();
+            List<String> types = new ArrayList<>();
+            for (VariableElement variableElement : methodParameters) {// 遍历每个参数元素
+                TypeMirror methodParameterType = variableElement.asType();
+
+                String parameterName = variableElement.getSimpleName().toString(); //参数名
+                String parameterKind = methodParameterType.toString(); //参数类型
+                note("------------process method param-------------");
+                note("parameterName:" + parameterName);
+                note("parameterKind:" + parameterKind);
+                note("typeVariable:" + methodParameterType);
+            }
+            note("types:" + types.toString());
         }
 ```
 
 
+
+###### 五、注解处理器的常见用途：代码生成
+
+> 搞个简单的代码生成栗子
+
+###### 1、定义注解
+
+```java
+@Target(ElementType.FIELD)
+@Retention(RetentionPolicy.CLASS)
+public @interface BindView {
+    int value();
+}
+```
+
+###### 2、处理注解生成代码
+
+```java
+
+
+/**
+ * Created by sunnyday on 2020/6/10 
+ * 注解处理器：JavaFileObject 代码生成练习
+ */
+@AutoService(Processor.class)
+public class BindViewProcessorPractise extends AbstractProcessor {
+
+    private Filer mFiler;
+    private Messager mMessager;
+    private Elements mElementUtils;
+
+    @Override
+    public synchronized void init(ProcessingEnvironment processingEnvironment) {
+        super.init(processingEnvironment);
+        mFiler = processingEnvironment.getFiler();
+        mMessager = processingEnvironment.getMessager();
+        mElementUtils = processingEnvironment.getElementUtils();
+    }
+
+    @Override
+    public SourceVersion getSupportedSourceVersion() {
+        return SourceVersion.latestSupported();
+    }
+
+    @Override
+    public Set<String> getSupportedAnnotationTypes() {
+        Set<String> set = new HashSet<>();
+        set.add(BindView.class.getCanonicalName());
+        return set;
+    }
+
+
+    @Override
+    public boolean process(Set<? extends TypeElement> set, RoundEnvironment roundEnvironment) {
+        Set<? extends Element> bindViewElements = roundEnvironment.getElementsAnnotatedWith(BindView.class);
+        for (Element element : bindViewElements) {
+            //1.获取包名
+            PackageElement packageElement = mElementUtils.getPackageOf(element);
+            String pkName = packageElement.getQualifiedName().toString();
+            note(String.format("package = %s", pkName));
+
+            //2.获取包装类类型
+            TypeElement enclosingElement = (TypeElement) element.getEnclosingElement();
+            String enclosingName = enclosingElement.getQualifiedName().toString();
+            note(String.format("enclosindClass = %s", enclosingElement));
+
+
+            //因为BindView只作用于filed，所以这里可直接进行强转
+            VariableElement bindViewElement = (VariableElement) element;
+            //3.获取注解的成员变量名
+            String bindViewFiledName = bindViewElement.getSimpleName().toString();
+            //3.获取注解的成员变量类型
+            String bindViewFiledClassType = bindViewElement.asType().toString();
+
+
+
+            //4.获取注解元数据
+            BindView bindView = element.getAnnotation(BindView.class);
+            int id = bindView.value();
+            note(String.format("%s %s = %d", bindViewFiledClassType, bindViewFiledName, id));
+
+            //4.生成文件
+            createFile(enclosingElement, bindViewFiledClassType, bindViewFiledName, id);
+            return true;
+        }
+        return false;
+    }
+
+    private void createFile(TypeElement enclosingElement, String bindViewFiledClassType, String bindViewFiledName, int id) {
+        String pkName = mElementUtils.getPackageOf(enclosingElement).getQualifiedName().toString();
+        try {
+            // 参数：文件全类名，元素
+            JavaFileObject jfo = mFiler.createSourceFile(pkName + ".ViewBinding", new Element[]{});
+            Writer writer = jfo.openWriter();
+            writer.write(brewCode(pkName, bindViewFiledClassType, bindViewFiledName, id));
+            writer.flush();
+            writer.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private String brewCode(String pkName, String bindViewFiledClassType, String bindViewFiledName, int id) {
+        StringBuilder builder = new StringBuilder();
+        builder.append("package " + pkName + ";\n\n");
+        builder.append("/**\n" +
+                " * Created by zb on 2020/6/12 \n" +
+                " * Auto generated by APT,do not modify here!!\n"+
+                " */\n\n");
+
+        builder.append("public class ViewBinding { \n\n");
+        builder.append("public static void main(String[] args){ \n");
+        String info = String.format("%s %s = %d", bindViewFiledClassType, bindViewFiledName, id);
+        builder.append("System.out.println(\"" + info + "\");\n");
+        builder.append("}\n");
+        builder.append("}");
+        return builder.toString();
+    }
+    private void note(String msg) {
+        mMessager.printMessage(Diagnostic.Kind.NOTE, msg);
+    }
+
+    private void note(String format, Object... args) {
+        mMessager.printMessage(Diagnostic.Kind.NOTE, String.format(format, args));
+    }
+
+}
+
+```
 
 
 
