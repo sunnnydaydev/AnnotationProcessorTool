@@ -286,7 +286,7 @@ class Foo {      // TypeElement
 
 
 
-###### 五、注解处理器的常见用途：代码生成
+### 五、注解处理器的常见用途：代码生成
 
 > 搞个简单的代码生成栗子
 
@@ -415,9 +415,18 @@ public class BindViewProcessorPractise extends AbstractProcessor {
 
 ```
 
+[项目中可能会碰到的坑]()
 
+参考：
 
-待续！！！
+1、https://doc.mcust.cn/jvm/article/40189.html#%E6%B3%A8%E8%A7%A3%E5%A4%84%E7%90%86%E5%99%A8%E7%9A%84%E5%8E%9F%E7%90%86
+
+2、https://www.jianshu.com/p/bcddc376c0ef
+
+3、https://www.jianshu.com/p/d7567258ae85
+
+4、https://github.com/Omooo/Android-Notes/blob/master/blogs/Android/APT.md
+
 
 
 

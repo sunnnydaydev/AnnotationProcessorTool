@@ -1,0 +1,27 @@
+1、com/squareup/javapoet/TypeName
+
+* What went wrong:
+Execution failed for task ':app:compileDebugJavaWithJavac'.
+> com/squareup/javapoet/TypeName
+
+* Try:
+Run with --stacktrace option to get the stack trace. Run with --info or --debug option to get more log output. Run with --scan to get full insights.
+
+Caused by: java.lang.NoClassDefFoundError: com/squareup/javapoet/TypeName
+Caused by: java.lang.ClassNotFoundException: com.squareup.javapoet.TypeName
+
+ 
+解决：implementation 换为api 
+
+implementation 'com.squareup:javapoet:1.12.1'
+
+ api 'com.squareup:javapoet:1.12.1'
+
+2、Annotation processors must be explicitly declared now.
+
+解决：gradle中添加如下
+
+javaCompileOptions { annotationProcessorOptions { includeCompileClasspath = true } }
+        //Annotation processors must be explicitly declared now. The following dependencies on the compile classpath are found to contain annotation processor.
+
+
