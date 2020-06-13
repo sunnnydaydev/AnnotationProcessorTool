@@ -601,7 +601,6 @@ public class ButterKnife {
 
 
 
-```
 [项目中可能会碰到的坑](https://github.com/sunnnydaydev/AnnotationProcessorTool/blob/master/bug.txt)
 
 参考：
@@ -613,7 +612,5 @@ public class ButterKnife {
 3、https://www.jianshu.com/p/d7567258ae85
 
 4、https://github.com/Omooo/Android-Notes/blob/master/blogs/Android/APT.md
-
-```
 
 
