@@ -413,6 +413,17 @@ public class BindViewProcessorPractise extends AbstractProcessor {
 
 ```
 
+（1）app/build/source/apt/debug/工程包/   生成代码：
+
+```java
+public class ViewBinding { 
+
+public static void main(String[] args){ 
+System.out.println("android.widget.TextView textView = 2131165359");
+}
+}
+```
+
 > 整体思路：
 >
 > 1、定义注解
@@ -579,6 +590,10 @@ public class BindViewProcessor extends AbstractProcessor {
 }
 
 ```
+
+>具体代码如下图，生成目录： app/build/source/apt/debug/工程包/  
+
+![](https://github.com/sunnnydaydev/AnnotationProcessorTool/blob/master/photos/generatecode.PNG)
 
 （3）引入
 
